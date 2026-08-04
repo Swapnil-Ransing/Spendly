@@ -1,8 +1,9 @@
 import sqlite3
 
-from flask import Flask, abort, flash, redirect, render_template, request, url_for
+from flask import Flask, abort, flash, redirect, render_template, request, session, url_for
+from werkzeug.security import check_password_hash
 
-from database.db import create_user, init_db, seed_db
+from database.db import create_user, get_user_by_email, init_db, seed_db
 
 app = Flask(__name__)
 app.secret_key = "dev-secret-key-change-in-production"
@@ -51,9 +52,31 @@ def register():
     abort(405)
 
 
-@app.route("/login")
+@app.route("/login", methods=["GET", "POST"])
 def login():
-    return render_template("login.html")
+    if request.method == "GET":
+        return render_template("login.html")
+
+    if request.method == "POST":
+        email = request.form.get("email", "").strip()
+        password = request.form.get("password", "")
+
+        user = get_user_by_email(email) if email else None
+
+        if user is None or not check_password_hash(user["password_hash"], password):
+            flash("Invalid email or password.")
+            return render_template("login.html")
+
+        session["user_id"] = user["id"]
+        return redirect(url_for("landing"))
+
+    abort(405)
+
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("landing"))
 
 
 @app.route("/terms")
@@ -69,11 +92,6 @@ def privacy():
 # ------------------------------------------------------------------ #
 # Placeholder routes — students will implement these                  #
 # ------------------------------------------------------------------ #
-
-@app.route("/logout")
-def logout():
-    return "Logout — coming in Step 3"
-
 
 @app.route("/profile")
 def profile():
