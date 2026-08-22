@@ -19,6 +19,11 @@
     --border: #e4e1da;
     --border-soft: #eeebe4;
 
+    --cat-travel: #3d6fae;
+    --cat-travel-light: #e7eef7;
+    --cat-other: #6b5b95;
+    --cat-other-light: #eeebf5;
+
     --font-display: 'DM Serif Display', Georgia, serif;
     --font-body: 'DM Sans', system-ui, sans-serif;
 
@@ -102,6 +107,8 @@ a { color: inherit; text-decoration: none; }
 
 .nav-links a { color: var(--ink-muted); transition: color 0.2s; }
 .nav-links a:hover { color: var(--ink); }
+
+.nav-user { color: var(--ink) !important; font-weight: 600; }
 
 .nav-cta {
     background: var(--ink) !important;
